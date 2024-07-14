@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Generation</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <h1>Image Generation with OOTDiffusion</h1>
+    
+    <h2>Simple Mode</h2>
+    <input type="file" id="vtonImgSimple" accept="image/*"><br>
+    <input type="file" id="garmImgSimple" accept="image/*"><br>
+    <button onclick="generateImageSimple()">Generate Image</button>
+    
+    <div id="outputSimple"></div>
+
+    <h2>Full Body Mode</h2>
+    <input type="file" id="vtonImgFull" accept="image/*"><br>
+    <input type="file" id="garmImgFull" accept="image/*"><br>
+    <select id="typeFull">
+        <option value="1">Lower-body</option>
+        <option value="0">Upper-body</option>
+        <option value="2">Dress</option>
+    </select>
+    <button onclick="generateImageFull()">Generate Image</button>
+
+    <div id="outputFull"></div>
+
+    <script>
+        const apiUrl = "https://tryonnew.onrender.com";
+
+        async function generateImageSimple() {
+            const vtonImg = document.getElementById('vtonImgSimple').files[0];
+            const garmImg = document.getElementById('garmImgSimple').files[0];
+            const formData = new FormData();
+            formData.append('vton_img', vtonImg);
+            formData.append('garm_img', garmImg);
+
+            const response = await fetch(`${apiUrl}/simple/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            document.getElementById('outputSimple').innerHTML = `<h3>Generated Image:</h3><img src="${url}" alt="Generated Image">`;
+        }
+
+        async function generateImageFull() {
+            const vtonImg = document.getElementById('vtonImgFull').files[0];
+            const garmImg = document.getElementById('garmImgFull').files[0];
+            const type = document.getElementById('typeFull').value;
+            const formData = new FormData();
+            formData.append('vton_img', vtonImg);
+            formData.append('garm_img', garmImg);
+            formData.append('type', type);
+
+            const response = await fetch(`${apiUrl}/fullbody/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            document.getElementById('outputFull').innerHTML = `<h3>Generated Image:</h3><img src="${url}" alt="Generated Image">`;
+        }
+    </script>
+</body>
+</html>
